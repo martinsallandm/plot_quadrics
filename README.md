@@ -1,6 +1,6 @@
 # Plot quadrics
 
-Python code for plotting quadrics using the marching squares algorithm
+Python code for plotting quadrics using the marching cubes algorithm
 
 
 ## usage:
