@@ -5,7 +5,7 @@ Python code for plotting quadrics using the marching cubes algorithm
 
 ## instalation
 
-there is need for installation other than install the requirements
+there is no need for installation other than install the requirements
 
 ```pip install -r requirements.txt```
 
