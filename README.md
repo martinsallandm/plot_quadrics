@@ -7,7 +7,7 @@ Python code for plotting quadrics using the marching cubes algorithm
 
 there is no need for installation other than install the requirements
 
-```pip install -r requirements.txt```
+```$ pip install -r requirements.txt```
 
 ### but...
 
@@ -17,7 +17,7 @@ there is no need for installation other than install the requirements
 
 To do that, enter the folder plot_quad and execute
 
-``` $ gcc -fPIC --shared compute.c -o compute.so ```
+```$ gcc -fPIC --shared compute.c -o compute.so ```
 
 
 ## usage:
