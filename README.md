@@ -15,7 +15,8 @@ there is no need for installation other than install the requirements
 - Change the path to the c lib in the plot_quad.py
 - Compile the c files in plot_quad
 
-To do that, ender in the folder plot_quad and execute
+To do that, enter the folder plot_quad and execute
+
 ``` $ gcc -fPIC --shared compute.c -o compute.so ```
 
 
