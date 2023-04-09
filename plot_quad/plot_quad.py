@@ -44,24 +44,11 @@ Vs = {
     8: (1.0,1.0,1.0)
 }
 
-def evalQuad(E,x,y,z):
+# def evalQuad(E,x,y,z):
 
-    # a = E[0,0]
-    # b = E[1,1]
-    # c = E[2,2]
-    # d = E[3,3]
-    # f = E[1,2]
-    # g = E[0,2]
-    # h = E[0,1]
-    # p = E[0,3]
-    # q = E[1,3]
-    # r = E[2,3]
+#     p = E[0,0]*x*x + E[1,1]*y*y + E[2,2]*z*z + 2.0*E[1,2]*y*z + 2.0*E[0,2]*x*z + 2.0*E[0,1]*x*y + 2.0*E[0,3]*x + 2.0*E[1,3]*y + 2.0*E[2,3]*z + E[3,3]
 
-    # p = a*x**2 + b*y**2 + c*z**2 + 2.0*f*y*z + 2.0*g*x*z + 2.0*h*x*y + 2.0*p*x + 2.0*q*y + 2.0*r*z + d
-
-    p = E[0,0]*x*x + E[1,1]*y*y + E[2,2]*z*z + 2.0*E[1,2]*y*z + 2.0*E[0,2]*x*z + 2.0*E[0,1]*x*y + 2.0*E[0,3]*x + 2.0*E[1,3]*y + 2.0*E[2,3]*z + E[3,3]
-
-    return p
+#     return p
 
 def rotateQuadric(E):
     ## rotate some random amount
@@ -77,86 +64,74 @@ def rotateQuadric(E):
     return E2
 
 
+# def interceptQuad_(E, P1x, P1y, P1z, P2x, P2y, P2z):
+#     pp1x = c_float(0.0)
+#     pp1y = c_float(0.0)
+#     pp1z = c_float(0.0)
+
+#     E_ = E.astype(np.float32)
+
+#     c_interceptQuad(E_.ctypes.data_as(c_float_p),  P1x, P1y, P1z, P2x, P2y, P2z,   c_float_ref(pp1x), c_float_ref(pp1y), c_float_ref(pp1z))
+
+#     return pp1x.value, pp1y.value, pp1z.value
 
 
+# def interceptQuad(E, P1x, P1y, P1z, P2x, P2y, P2z):
 
+#     if E is None:
+#         pp1x = (P1x + P2x)/2.0
+#         pp1y = (P1y + P2y)/2.0
+#         pp1z = (P1z + P2z)/2.0
 
-
-
-
-
-
-
-
-
-def interceptQuad_(E, P1x, P1y, P1z, P2x, P2y, P2z):
-    pp1x = c_float(0.0)
-    pp1y = c_float(0.0)
-    pp1z = c_float(0.0)
-
-    E_ = E.astype(np.float32)
-
-    c_interceptQuad(E_.ctypes.data_as(c_float_p),  P1x, P1y, P1z, P2x, P2y, P2z,   c_float_ref(pp1x), c_float_ref(pp1y), c_float_ref(pp1z))
-
-    return pp1x.value, pp1y.value, pp1z.value
-
-
-def interceptQuad(E, P1x, P1y, P1z, P2x, P2y, P2z):
-
-    if E is None:
-        pp1x = (P1x + P2x)/2.0
-        pp1y = (P1y + P2y)/2.0
-        pp1z = (P1z + P2z)/2.0
-
-        return (pp1x, pp1y, pp1z)
+#         return (pp1x, pp1y, pp1z)
     
-    a = E[0,0]
-    b = E[1,1]
-    c = E[2,2]
-    d = E[3,3]
-    f = E[1,2]
-    g = E[0,2]
-    h = E[0,1]
-    p = E[0,3]
-    q = E[1,3]
-    r = E[2,3]
+#     a = E[0,0]
+#     b = E[1,1]
+#     c = E[2,2]
+#     d = E[3,3]
+#     f = E[1,2]
+#     g = E[0,2]
+#     h = E[0,1]
+#     p = E[0,3]
+#     q = E[1,3]
+#     r = E[2,3]
 
 
-    P1x2 = P1x**2 
-    P1y2 = P1y**2 
-    P1z2 = P1z**2 
-    P2x2 = P2x**2 
-    P2y2 = P2y**2 
-    P2z2 = P2z**2 
+#     P1x2 = P1x**2 
+#     P1y2 = P1y**2 
+#     P1z2 = P1z**2 
+#     P2x2 = P2x**2 
+#     P2y2 = P2y**2 
+#     P2z2 = P2z**2 
 
 
-    b_ =  -(P2x*p - P1x*p - P1y*q + P2y*q - P1z*r + P2z*r - P1x2*a - P1y2*b - P1z2*c + P1x*P2x*a + P1y*P2y*b + P1z*P2z*c - 2*P1y*P1z*f + P1y*P2z*f + P2y*P1z*f - 2*P1x*P1z*g + P1x*P2z*g + P2x*P1z*g - 2*P1x*P1y*h + P1x*P2y*h + P2x*P1y*h)
-    D_ = (h**2 - a*b)*P1x2*P2y2 + (2*g*h - 2*a*f)*P1x2*P2y*P2z + (2*h*p - 2*a*q)*P1x2*P2y + (g**2 - a*c)*P1x2*P2z2 + (2*g*p - 2*a*r)*P1x2*P2z + (p**2 - a*d)*P1x2 + (- 2*h**2 + 2*a*b)*P1x*P1y*P2x*P2y + (2*a*f - 2*g*h)*P1x*P1y*P2x*P2z + (2*a*q - 2*h*p)*P1x*P1y*P2x + (2*b*g - 2*f*h)*P1x*P1y*P2y*P2z + (2*b*p - 2*h*q)*P1x*P1y*P2y + (2*f*g - 2*c*h)*P1x*P1y*P2z2 + (2*f*p + 2*g*q - 4*h*r)*P1x*P1y*P2z + (2*p*q - 2*d*h)*P1x*P1y + (2*a*f - 2*g*h)*P1x*P1z*P2x*P2y + (- 2*g**2 + 2*a*c)*P1x*P1z*P2x*P2z + (2*a*r - 2*g*p)*P1x*P1z*P2x + (2*f*h - 2*b*g)*P1x*P1z*P2y2 + (2*c*h - 2*f*g)*P1x*P1z*P2y*P2z + (2*f*p - 4*g*q + 2*h*r)*P1x*P1z*P2y + (2*c*p - 2*g*r)*P1x*P1z*P2z + (2*p*r - 2*d*g)*P1x*P1z + (2*a*q - 2*h*p)*P1x*P2x*P2y + (2*a*r - 2*g*p)*P1x*P2x*P2z + (- 2*p**2 + 2*a*d)*P1x*P2x + (2*h*q - 2*b*p)*P1x*P2y2 + (2*g*q - 4*f*p + 2*h*r)*P1x*P2y*P2z + (2*d*h - 2*p*q)*P1x*P2y + (2*g*r - 2*c*p)*P1x*P2z2 + (2*d*g - 2*p*r)*P1x*P2z + (h**2 - a*b)*P1y2*P2x2 + (2*f*h - 2*b*g)*P1y2*P2x*P2z + (2*h*q - 2*b*p)*P1y2*P2x + (f**2 - b*c)*P1y2*P2z2 + (2*f*q - 2*b*r)*P1y2*P2z + (q**2 - b*d)*P1y2 + (2*g*h - 2*a*f)*P1y*P1z*P2x2 + (2*b*g - 2*f*h)*P1y*P1z*P2x*P2y + (2*c*h - 2*f*g)*P1y*P1z*P2x*P2z + (2*g*q - 4*f*p + 2*h*r)*P1y*P1z*P2x + (- 2*f**2 + 2*b*c)*P1y*P1z*P2y*P2z + (2*b*r - 2*f*q)*P1y*P1z*P2y + (2*c*q - 2*f*r)*P1y*P1z*P2z + (2*q*r - 2*d*f)*P1y*P1z + (2*h*p - 2*a*q)*P1y*P2x2 + (2*b*p - 2*h*q)*P1y*P2x*P2y + (2*f*p - 4*g*q + 2*h*r)*P1y*P2x*P2z + (2*d*h - 2*p*q)*P1y*P2x + (2*b*r - 2*f*q)*P1y*P2y*P2z + (- 2*q**2 + 2*b*d)*P1y*P2y + (2*f*r - 2*c*q)*P1y*P2z2 + (2*d*f - 2*q*r)*P1y*P2z + (g**2 - a*c)*P1z2*P2x2 + (2*f*g - 2*c*h)*P1z2*P2x*P2y + (2*g*r - 2*c*p)*P1z2*P2x + (f**2 - b*c)*P1z2*P2y2 + (2*f*r - 2*c*q)*P1z2*P2y + (r**2 - c*d)*P1z2 + (2*g*p - 2*a*r)*P1z*P2x2 + (2*f*p + 2*g*q - 4*h*r)*P1z*P2x*P2y + (2*c*p - 2*g*r)*P1z*P2x*P2z + (2*d*g - 2*p*r)*P1z*P2x + (2*f*q - 2*b*r)*P1z*P2y2 + (2*c*q - 2*f*r)*P1z*P2y*P2z + (2*d*f - 2*q*r)*P1z*P2y + (- 2*r**2 + 2*c*d)*P1z*P2z + (p**2 - a*d)*P2x2 + (2*p*q - 2*d*h)*P2x*P2y + (2*p*r - 2*d*g)*P2x*P2z + (q**2 - b*d)*P2y2 + (2*q*r - 2*d*f)*P2y*P2z + (r**2 - c*d)*P2z2
-    a_ = (f*(2*P1y*P1z - 2*P1y*P2z - 2*P2y*P1z + 2*P2y*P2z) + g*(2*P1x*P1z - 2*P1x*P2z - 2*P2x*P1z + 2*P2x*P2z) + h*(2*P1x*P1y - 2*P1x*P2y - 2*P2x*P1y + 2*P2x*P2y) + P1x2*a + P2x2*a + P1y2*b + P2y2*b + P1z2*c + P2z2*c - 2*P1x*P2x*a - 2*P1y*P2y*b - 2*P1z*P2z*c)
+#     b_ =  -(P2x*p - P1x*p - P1y*q + P2y*q - P1z*r + P2z*r - P1x2*a - P1y2*b - P1z2*c + P1x*P2x*a + P1y*P2y*b + P1z*P2z*c - 2*P1y*P1z*f + P1y*P2z*f + P2y*P1z*f - 2*P1x*P1z*g + P1x*P2z*g + P2x*P1z*g - 2*P1x*P1y*h + P1x*P2y*h + P2x*P1y*h)
+#     D_ = (h**2 - a*b)*P1x2*P2y2 + (2*g*h - 2*a*f)*P1x2*P2y*P2z + (2*h*p - 2*a*q)*P1x2*P2y + (g**2 - a*c)*P1x2*P2z2 + (2*g*p - 2*a*r)*P1x2*P2z + (p**2 - a*d)*P1x2 + (- 2*h**2 + 2*a*b)*P1x*P1y*P2x*P2y + (2*a*f - 2*g*h)*P1x*P1y*P2x*P2z + (2*a*q - 2*h*p)*P1x*P1y*P2x + (2*b*g - 2*f*h)*P1x*P1y*P2y*P2z + (2*b*p - 2*h*q)*P1x*P1y*P2y + (2*f*g - 2*c*h)*P1x*P1y*P2z2 + (2*f*p + 2*g*q - 4*h*r)*P1x*P1y*P2z + (2*p*q - 2*d*h)*P1x*P1y + (2*a*f - 2*g*h)*P1x*P1z*P2x*P2y + (- 2*g**2 + 2*a*c)*P1x*P1z*P2x*P2z + (2*a*r - 2*g*p)*P1x*P1z*P2x + (2*f*h - 2*b*g)*P1x*P1z*P2y2 + (2*c*h - 2*f*g)*P1x*P1z*P2y*P2z + (2*f*p - 4*g*q + 2*h*r)*P1x*P1z*P2y + (2*c*p - 2*g*r)*P1x*P1z*P2z + (2*p*r - 2*d*g)*P1x*P1z + (2*a*q - 2*h*p)*P1x*P2x*P2y + (2*a*r - 2*g*p)*P1x*P2x*P2z + (- 2*p**2 + 2*a*d)*P1x*P2x + (2*h*q - 2*b*p)*P1x*P2y2 + (2*g*q - 4*f*p + 2*h*r)*P1x*P2y*P2z + (2*d*h - 2*p*q)*P1x*P2y + (2*g*r - 2*c*p)*P1x*P2z2 + (2*d*g - 2*p*r)*P1x*P2z + (h**2 - a*b)*P1y2*P2x2 + (2*f*h - 2*b*g)*P1y2*P2x*P2z + (2*h*q - 2*b*p)*P1y2*P2x + (f**2 - b*c)*P1y2*P2z2 + (2*f*q - 2*b*r)*P1y2*P2z + (q**2 - b*d)*P1y2 + (2*g*h - 2*a*f)*P1y*P1z*P2x2 + (2*b*g - 2*f*h)*P1y*P1z*P2x*P2y + (2*c*h - 2*f*g)*P1y*P1z*P2x*P2z + (2*g*q - 4*f*p + 2*h*r)*P1y*P1z*P2x + (- 2*f**2 + 2*b*c)*P1y*P1z*P2y*P2z + (2*b*r - 2*f*q)*P1y*P1z*P2y + (2*c*q - 2*f*r)*P1y*P1z*P2z + (2*q*r - 2*d*f)*P1y*P1z + (2*h*p - 2*a*q)*P1y*P2x2 + (2*b*p - 2*h*q)*P1y*P2x*P2y + (2*f*p - 4*g*q + 2*h*r)*P1y*P2x*P2z + (2*d*h - 2*p*q)*P1y*P2x + (2*b*r - 2*f*q)*P1y*P2y*P2z + (- 2*q**2 + 2*b*d)*P1y*P2y + (2*f*r - 2*c*q)*P1y*P2z2 + (2*d*f - 2*q*r)*P1y*P2z + (g**2 - a*c)*P1z2*P2x2 + (2*f*g - 2*c*h)*P1z2*P2x*P2y + (2*g*r - 2*c*p)*P1z2*P2x + (f**2 - b*c)*P1z2*P2y2 + (2*f*r - 2*c*q)*P1z2*P2y + (r**2 - c*d)*P1z2 + (2*g*p - 2*a*r)*P1z*P2x2 + (2*f*p + 2*g*q - 4*h*r)*P1z*P2x*P2y + (2*c*p - 2*g*r)*P1z*P2x*P2z + (2*d*g - 2*p*r)*P1z*P2x + (2*f*q - 2*b*r)*P1z*P2y2 + (2*c*q - 2*f*r)*P1z*P2y*P2z + (2*d*f - 2*q*r)*P1z*P2y + (- 2*r**2 + 2*c*d)*P1z*P2z + (p**2 - a*d)*P2x2 + (2*p*q - 2*d*h)*P2x*P2y + (2*p*r - 2*d*g)*P2x*P2z + (q**2 - b*d)*P2y2 + (2*q*r - 2*d*f)*P2y*P2z + (r**2 - c*d)*P2z2
+#     a_ = (f*(2*P1y*P1z - 2*P1y*P2z - 2*P2y*P1z + 2*P2y*P2z) + g*(2*P1x*P1z - 2*P1x*P2z - 2*P2x*P1z + 2*P2x*P2z) + h*(2*P1x*P1y - 2*P1x*P2y - 2*P2x*P1y + 2*P2x*P2y) + P1x2*a + P2x2*a + P1y2*b + P2y2*b + P1z2*c + P2z2*c - 2*P1x*P2x*a - 2*P1y*P2y*b - 2*P1z*P2z*c)
 
  
-    t1 = (b_ + np.sqrt(D_)+0.000001)/(a_+0.000001)
-    t2 = (b_ - np.sqrt(D_)+0.000001)/(a_+0.000001)
+#     t1 = (b_ + np.sqrt(D_)+0.000001)/(a_+0.000001)
+#     t2 = (b_ - np.sqrt(D_)+0.000001)/(a_+0.000001)
 
-    #print(t1,t2)
+#     #print(t1,t2)
 
-    if t1<1.0 and t1>0.0:
-        t = t1
-    else:
-        t = t2
+#     if t1<1.0 and t1>0.0:
+#         t = t1
+#     else:
+#         t = t2
 
-    t = t if t<=1.0 else 1.0
-    t = t if t>=0.0 else 0.0
+#     t = t if t<=1.0 else 1.0
+#     t = t if t>=0.0 else 0.0
 
 
 
-    #t = 0.5
+#     #t = 0.5
 
-    pp1x = P1x + t*(P2x-P1x)
-    pp1y = P1y + t*(P2y-P1y)
-    pp1z = P1z + t*(P2z-P1z)        
+#     pp1x = P1x + t*(P2x-P1x)
+#     pp1y = P1y + t*(P2y-P1y)
+#     pp1z = P1z + t*(P2z-P1z)        
 
-    return (pp1x, pp1y, pp1z)
+#     return (pp1x, pp1y, pp1z)
 
 
 
