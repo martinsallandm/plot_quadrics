@@ -2,6 +2,36 @@ import plotly.graph_objects as go
 import numpy as np
 import time
 
+
+
+### python C integration
+
+import ctypes
+import pathlib
+
+libname = "/Users/ninguem/Dropbox/prg_new/python/PROJETOS/HAPI/plot_quadrics/plot_quad/compute.so"
+c_lib = ctypes.CDLL(libname)
+c_float_p = ctypes.POINTER(ctypes.c_float)
+c_float_p_p = np.ctypeslib.ndpointer(ctypes.c_float, flags="C_CONTIGUOUS")
+c_int_p_p = np.ctypeslib.ndpointer(ctypes.c_int8, flags="C_CONTIGUOUS")
+c_float = ctypes.c_float
+c_int = ctypes.c_int
+byref = ctypes.byref
+
+
+c_interceptQuad = c_lib.interceptQuad
+c_interceptQuad.argtypes = [c_float_p_p, c_float, c_float, c_float, c_float, c_float, c_float, c_float_p, c_float_p, c_float_p]
+
+
+c_compute3DValues = c_lib.compute3DValues
+c_compute3DValues.argtypes = [c_float_p_p, c_int_p_p, c_float, c_int]
+
+
+###
+
+
+
+
 Vs = {
     1: (0.0,0.0,0.0),
     2: (1.0,0.0,0.0),
@@ -15,18 +45,20 @@ Vs = {
 
 def evalQuad(E,x,y,z):
 
-    a = E[0,0]
-    b = E[1,1]
-    c = E[2,2]
-    d = E[3,3]
-    f = E[1,2]
-    g = E[0,2]
-    h = E[0,1]
-    p = E[0,3]
-    q = E[1,3]
-    r = E[2,3]
+    # a = E[0,0]
+    # b = E[1,1]
+    # c = E[2,2]
+    # d = E[3,3]
+    # f = E[1,2]
+    # g = E[0,2]
+    # h = E[0,1]
+    # p = E[0,3]
+    # q = E[1,3]
+    # r = E[2,3]
 
-    p = a*x**2 + b*y**2 + c*z**2 + 2.0*f*y*z + 2.0*g*x*z + 2.0*h*x*y + 2.0*p*x + 2.0*q*y + 2.0*r*z + d
+    # p = a*x**2 + b*y**2 + c*z**2 + 2.0*f*y*z + 2.0*g*x*z + 2.0*h*x*y + 2.0*p*x + 2.0*q*y + 2.0*r*z + d
+
+    p = E[0,0]*x*x + E[1,1]*y*y + E[2,2]*z*z + 2.0*E[1,2]*y*z + 2.0*E[0,2]*x*z + 2.0*E[0,1]*x*y + 2.0*E[0,3]*x + 2.0*E[1,3]*y + 2.0*E[2,3]*z + E[3,3]
 
     return p
 
@@ -42,6 +74,31 @@ def rotateQuadric(E):
     E2 = R.T@E@R    
 
     return E2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def interceptQuad_(E, P1x, P1y, P1z, P2x, P2y, P2z):
+    pp1x = c_float(0.0)
+    pp1y = c_float(0.0)
+    pp1z = c_float(0.0)
+
+    E_ = E.astype(np.float32)
+
+    c_interceptQuad(E_.ctypes.data_as(c_float_p),  P1x, P1y, P1z, P2x, P2y, P2z,   c_float_ref(pp1x), c_float_ref(pp1y), c_float_ref(pp1z))
+
+    return pp1x.value, pp1y.value, pp1z.value
+
 
 def interceptQuad(E, P1x, P1y, P1z, P2x, P2y, P2z):
 
@@ -101,36 +158,59 @@ def interceptQuad(E, P1x, P1y, P1z, P2x, P2y, P2z):
     return (pp1x, pp1y, pp1z)
 
 
+
+
 def addFaceBasedOnMiddlePoints(X,Y,Z, i,j,k,    vertex1, vertex2,   vertex3, vertex4,    vertex5, vertex6,   vertexIndex, ox, oy, oz,  dt, E):
 
-    x,y,z = interceptQuad(E, 
+    x = c_float(0.0)
+    y = c_float(0.0)
+    z = c_float(0.0)
+
+    c_interceptQuad(E,
                           ox+dt*Vs[vertex1][0], oy+dt*Vs[vertex1][1], oz+dt*Vs[vertex1][2],
-                          ox+dt*Vs[vertex2][0], oy+dt*Vs[vertex2][1], oz+dt*Vs[vertex2][2])
+                          ox+dt*Vs[vertex2][0], oy+dt*Vs[vertex2][1], oz+dt*Vs[vertex2][2],
+                byref(x), byref(y), byref(z))
 
-    X.append(x)
-    Y.append(y)
-    Z.append(z)
+    # x,y,z = interceptQuad(E, 
+    #                       ox+dt*Vs[vertex1][0], oy+dt*Vs[vertex1][1], oz+dt*Vs[vertex1][2],
+    #                       ox+dt*Vs[vertex2][0], oy+dt*Vs[vertex2][1], oz+dt*Vs[vertex2][2])
 
-    x,y,z = interceptQuad(E, 
+    X += x.value,
+    Y += y.value,
+    Z += z.value,
+
+
+    c_interceptQuad(E,
                           ox+dt*Vs[vertex3][0], oy+dt*Vs[vertex3][1], oz+dt*Vs[vertex3][2],
-                          ox+dt*Vs[vertex4][0], oy+dt*Vs[vertex4][1], oz+dt*Vs[vertex4][2])
+                          ox+dt*Vs[vertex4][0], oy+dt*Vs[vertex4][1], oz+dt*Vs[vertex4][2],
+                byref(x), byref(y), byref(z))
 
-    X.append(x)
-    Y.append(y)
-    Z.append(z)
+    # x,y,z = interceptQuad(E, 
+    #                       ox+dt*Vs[vertex3][0], oy+dt*Vs[vertex3][1], oz+dt*Vs[vertex3][2],
+    #                       ox+dt*Vs[vertex4][0], oy+dt*Vs[vertex4][1], oz+dt*Vs[vertex4][2])
 
-    x,y,z = interceptQuad(E, 
+    X += x.value,
+    Y += y.value,
+    Z += z.value,
+
+
+    c_interceptQuad(E,
                           ox+dt*Vs[vertex5][0], oy+dt*Vs[vertex5][1], oz+dt*Vs[vertex5][2],
-                          ox+dt*Vs[vertex6][0], oy+dt*Vs[vertex6][1], oz+dt*Vs[vertex6][2])
+                          ox+dt*Vs[vertex6][0], oy+dt*Vs[vertex6][1], oz+dt*Vs[vertex6][2],
+                byref(x), byref(y), byref(z))
 
-    X.append(x)
-    Y.append(y)
-    Z.append(z)
+    # x,y,z = interceptQuad(E, 
+    #                       ox+dt*Vs[vertex5][0], oy+dt*Vs[vertex5][1], oz+dt*Vs[vertex5][2],
+    #                       ox+dt*Vs[vertex6][0], oy+dt*Vs[vertex6][1], oz+dt*Vs[vertex6][2])
+
+    X += x.value,
+    Y += y.value,
+    Z += z.value,
 
 
-    i.append(vertexIndex[0]+0)
-    j.append(vertexIndex[0]+1)
-    k.append(vertexIndex[0]+2)
+    i += vertexIndex[0]+0,
+    j += vertexIndex[0]+1,
+    k += vertexIndex[0]+2,
 
     vertexIndex[0] += 3
 
@@ -957,7 +1037,7 @@ def addFacesBasedOnCase(vertexIndex, X,Y,Z, i,j,k, v1,v2,v3,v4,v5,v6,v7,v8, ox, 
         addFaceBasedOnMiddlePoints(X,Y,Z, i,j,k,  *(4, 8, 4, 3, 8, 6),   vertexIndex, ox, oy, oz, dt, E)
         return
         
-def marchingCubes(lim, N, E):
+def marchingCubes(lim, N, E_):
     """
     returns a set of vertex X,Y,Z and faces i,j,k for the plot of implicit equation eqn
 
@@ -978,6 +1058,9 @@ def marchingCubes(lim, N, E):
         . -> x
 
     """
+
+    # for ctypes crap...
+    E = E_.astype(np.float32)
 
     Vs_ = {
         1: (0,0,0),
@@ -1009,28 +1092,31 @@ def marchingCubes(lim, N, E):
     quadValuesInTheWholeCube = np.zeros((N,N,N)).astype('int8')
 
     tic = time.time()
-    for i_,x_ in enumerate( np.linspace(-lim, lim, N) ):
-        for j_,y_ in enumerate( np.linspace(-lim, lim, N) ):
-            for k_,z_ in enumerate( np.linspace(-lim, lim, N) ):
-                x = x_ - dt/2.01
-                y = y_ - dt/2.01
-                z = z_ - dt/2.01
+    # for i_,x_ in enumerate( np.linspace(-lim, lim, N) ):
+    #     for j_,y_ in enumerate( np.linspace(-lim, lim, N) ):
+    #         for k_,z_ in enumerate( np.linspace(-lim, lim, N) ):
+    #             x = x_ - dt/2.01
+    #             y = y_ - dt/2.01
+    #             z = z_ - dt/2.01
 
-                quadValuesInTheWholeCube[i_,j_,k_] = int(np.sign(evalQuad(E,x,y,z)))
+    #             quadValuesInTheWholeCube[i_,j_,k_] = int(np.sign(evalQuad(E,x,y,z)))
+
+
+    c_compute3DValues(E.astype('float32'), quadValuesInTheWholeCube, lim, N)
 
     toc = time.time()
     print(f'Time to evaluate the cube {toc-tic}s')
 
     tic = time.time()
-    for i_,x_ in enumerate( np.linspace(-lim, lim, N) ):
-        for j_,y_ in enumerate( np.linspace(-lim, lim, N) ):
-            for k_,z_ in enumerate( np.linspace(-lim, lim, N) ):
+    for i_ in range(N):
+        for j_ in range(N):
+            for k_ in range(N):
 
                 if i_ < N-1 and j_ < N-1 and k_ < N-1:
 
-                    x = x_ - dt/2.01
-                    y = y_ - dt/2.01
-                    z = z_ - dt/2.01
+                    x = -lim + i_*dt - dt/2.0
+                    y = -lim + j_*dt - dt/2.0
+                    z = -lim + k_*dt - dt/2.0
 
                     v1 = quadValuesInTheWholeCube[i_+Vs_[1][0],j_+Vs_[1][1],k_+Vs_[1][2]]
                     v2 = quadValuesInTheWholeCube[i_+Vs_[2][0],j_+Vs_[2][1],k_+Vs_[2][2]]
@@ -1048,7 +1134,7 @@ def marchingCubes(lim, N, E):
                         cubes.append((x,y,z,tuple()))
 
     toc = time.time()
-    #print(f'Time to face up the quad {toc-tic}s')
+    print(f'Time to face up the quad {toc-tic}s')
                 
     return X,Y,Z,i,j,k, cubes, dt
 
