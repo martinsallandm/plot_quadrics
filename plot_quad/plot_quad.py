@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import numpy as np
 import time
+import os
 
 
 
@@ -9,7 +10,7 @@ import time
 import ctypes
 import pathlib
 
-libname = "/Users/ninguem/Dropbox/prg_new/python/PROJETOS/HAPI/plot_quadrics/plot_quad/compute.so"
+libname = os.getcwd() + "/plot_quad/compute.so"
 c_lib = ctypes.CDLL(libname)
 c_float_p = ctypes.POINTER(ctypes.c_float)
 c_float_p_p = np.ctypeslib.ndpointer(ctypes.c_float, flags="C_CONTIGUOUS")

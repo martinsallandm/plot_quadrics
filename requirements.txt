@@ -1,2 +1,6 @@
-plotly
 numpy
+cufflinks
+ipykernel
+nbformat
+plotly
+

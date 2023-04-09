@@ -11,8 +11,8 @@ there is no need for installation other than install the requirements
 
 ### but...
 
-- Change the path to the local folder on the ipynb files
-- Change the path to the c lib in the plot_quad.py
+- if needed, change the path to the local folder on the ipynb files
+- If needed, change the path to the c lib in the plot_quad.py
 - Compile the c files in plot_quad
 
 To do that, enter the folder plot_quad and execute
