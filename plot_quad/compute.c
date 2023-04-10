@@ -4,6 +4,19 @@
 
 
 
+float *zeros(int N) {
+
+    float *array;
+
+    array = malloc(sizeof(float)*N);
+
+    array[0] = 1.0;
+    array[1] = -1.0;
+
+    return array;
+}
+
+
 
 float evalQuad(float *E, float x, float y, float z) {
 
@@ -89,8 +102,7 @@ void interceptQuad(float *E, float P1x, float P1y, float P1z, float P2x, float P
     else
         t = t2;
 
-    t = t<=1.0?t:1.0;
-    t = t>=0.0?t:0.0;
+    t = t>=0.0&&t<=1.0?t:0.5;
 
 
     *pp1x = P1x + t*(P2x-P1x);

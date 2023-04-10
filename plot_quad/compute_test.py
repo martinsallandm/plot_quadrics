@@ -21,6 +21,9 @@ c_interceptQuad.argtypes = [c_float_p_p, c_float, c_float, c_float, c_float, c_f
 c_compute3DValues = c_lib.compute3DValues
 c_compute3DValues.argtypes = [c_float_p_p, c_int_p_p, c_float, c_int]
 
+c_zeros = c_lib.zeros
+c_zeros.argtypes = [c_int]
+c_zeros.restype = ctypes.POINTER(ctypes.c_float * 10)
 
 
 E = np.array([[1, 0, 0, 0],[0, 1, 0, 0],[0, 0, 1, 0],[0, 0, 0, -1]])
@@ -62,3 +65,9 @@ print(A)
 
 
 print(f'{accumulatedTime}s')
+
+
+A = c_zeros(10)
+
+print(np.array(A.contents))
+

@@ -1077,7 +1077,7 @@ def marchingCubes(lim, N, E_):
 
     #             quadValuesInTheWholeCube[i_,j_,k_] = int(np.sign(evalQuad(E,x,y,z)))
 
-
+    # 200+ times speedup!
     c_compute3DValues(E.astype('float32'), quadValuesInTheWholeCube, lim, N)
 
     toc = time.time()
