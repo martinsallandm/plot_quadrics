@@ -1183,6 +1183,7 @@ def setPatches(X,Y,Z, i,j,k, lim, cubes, dt, color, opacity=1.0):
             k=k,
             color=color,
             opacity=opacity,
+            hoverinfo='none'
         ),
         
         go.Scatter3d(
@@ -1190,7 +1191,8 @@ def setPatches(X,Y,Z, i,j,k, lim, cubes, dt, color, opacity=1.0):
             y=Ycm1,
             z=Zcm1,
             mode='markers',
-            marker={'color':'red'}
+            marker={'color':'red'},
+            hoverinfo='none'
         ),
 
         go.Scatter3d(
@@ -1198,14 +1200,16 @@ def setPatches(X,Y,Z, i,j,k, lim, cubes, dt, color, opacity=1.0):
             y=Ycm0,
             z=Zcm0,
             mode='markers',
-            marker={'color':'white'}
+            marker={'color':'white'},
+            hoverinfo='none'
         ),
         
         go.Scatter3d(
             x=Xcl,
             y=Ycl,
             z=Zcl,
-            mode='lines'
+            mode='lines',
+            hoverinfo='none'
         ),
         
         go.Scatter3d(
@@ -1213,7 +1217,8 @@ def setPatches(X,Y,Z, i,j,k, lim, cubes, dt, color, opacity=1.0):
             y=Ye,
             z=Ze,
             mode='lines',
-            line={'color': '#202020', 'width':3}
+            line={'color': '#202020', 'width':3},
+            hoverinfo='none'
         )
     ]
     

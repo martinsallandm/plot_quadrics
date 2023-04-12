@@ -109,8 +109,8 @@ extern "C" void interceptQuad(float *E, float P1x, float P1y, float P1z, float P
     float a_ = (f*(2.0*P1y*P1z - 2.0*P1y*P2z - 2.0*P2y*P1z + 2.0*P2y*P2z) + g*(2.0*P1x*P1z - 2.0*P1x*P2z - 2.0*P2x*P1z + 2.0*P2x*P2z) + h*(2.0*P1x*P1y - 2.0*P1x*P2y - 2.0*P2x*P1y + 2.0*P2x*P2y) + P1x2_*a + P2x2_*a + P1y2_*b + P2y2_*b + P1z2_*c + P2z2_*c - 2.0*P1x*P2x*a - 2.0*P1y*P2y*b - 2.0*P1z*P2z*c);
 
  
-    float t1 = (b_ + sqrt(D_)+0.0000001)/(a_+0.00000001);
-    float t2 = (b_ - sqrt(D_)+0.0000001)/(a_+0.00000001);
+    float t1 = (b_ + sqrt(D_)+0.00001)/(a_+0.00000000001);
+    float t2 = (b_ - sqrt(D_)+0.00001)/(a_+0.00000000001);
 
     float t;
 
