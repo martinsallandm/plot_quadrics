@@ -1,14 +1,14 @@
-//  gcc -fPIC --shared compute.c -o compute.so
+//  g++ -fPIC --shared compute.c -o compute.so
 
 #include "compute.h"
 
 
 
-float *zeros(int N) {
+extern "C" float *zeros(int N) {
 
     float *array;
 
-    array = malloc(sizeof(float)*N);
+    array = new float[N];
 
     array[0] = 1.0;
     array[1] = -1.0;
@@ -18,7 +18,9 @@ float *zeros(int N) {
 
 
 
-float evalQuad(float *E, float x, float y, float z) {
+extern "C" float evalQuad(float *E, float x, float y, float z, float *bbox) {
+
+    float box = 0.5;
 
     float a = E[0*4+0];
     float b = E[1*4+1];
@@ -31,11 +33,26 @@ float evalQuad(float *E, float x, float y, float z) {
     float q = E[1*4+3];
     float r = E[2*4+3];
 
-    return a*x*x + b*y*y + c*z*z + 2.0*f*y*z + 2.0*g*x*z + 2.0*h*x*y + 2.0*p*x + 2.0*q*y + 2.0*r*z + d;
+    float polyVal = a*x*x + b*y*y + c*z*z + 2.0*f*y*z + 2.0*g*x*z + 2.0*h*x*y + 2.0*p*x + 2.0*q*y + 2.0*r*z + d;
+
+    if ( (polyVal < 0.0) && (x<bbox[0]))
+        polyVal *= -1.0;
+    if ( (polyVal < 0.0) && (x>bbox[1]))
+        polyVal *= -1.0;
+    if ( (polyVal < 0.0) && (y<bbox[2]))
+        polyVal *= -1.0;
+    if ( (polyVal < 0.0) && (y>bbox[3]))
+        polyVal *= -1.0;
+    if ( (polyVal < 0.0) && (z<bbox[4]))
+        polyVal *= -1.0;
+    if ( (polyVal < 0.0) && (z>bbox[5]))
+        polyVal *= -1.0;
+
+    return polyVal;
 }
 
 
-void compute3DValues(float *E, char *quadValuesInTheWholeCube, float lim, int N) {
+extern "C" void compute3DValues(float *E, char *quadValuesInTheWholeCube, float lim, int N, float *bbox) {
 
     int i, j, k;
     float x, y, z;
@@ -50,7 +67,7 @@ void compute3DValues(float *E, char *quadValuesInTheWholeCube, float lim, int N)
                 y = -lim+(float)j*dt - dt/2.0;
                 z = -lim+(float)k*dt - dt/2.0;
 
-                quadValuesInTheWholeCube[i*N*N + j*N + k] = evalQuad(E,x,y,z)>0?1:-1;
+                quadValuesInTheWholeCube[i*N*N + j*N + k] = evalQuad(E,x,y,z, bbox)>0.0?1:-1;
             }
 }
 
@@ -58,7 +75,7 @@ void compute3DValues(float *E, char *quadValuesInTheWholeCube, float lim, int N)
 
 
 
-void interceptQuad(float *E, float P1x, float P1y, float P1z, float P2x, float P2y, float P2z, float *pp1x, float *pp1y, float *pp1z) {
+extern "C" void interceptQuad(float *E, float P1x, float P1y, float P1z, float P2x, float P2y, float P2z, float *pp1x, float *pp1y, float *pp1z) {
 
     if (E == NULL) {
         *pp1x = (P1x + P2x)/2.0;
@@ -92,8 +109,8 @@ void interceptQuad(float *E, float P1x, float P1y, float P1z, float P2x, float P
     float a_ = (f*(2.0*P1y*P1z - 2.0*P1y*P2z - 2.0*P2y*P1z + 2.0*P2y*P2z) + g*(2.0*P1x*P1z - 2.0*P1x*P2z - 2.0*P2x*P1z + 2.0*P2x*P2z) + h*(2.0*P1x*P1y - 2.0*P1x*P2y - 2.0*P2x*P1y + 2.0*P2x*P2y) + P1x2_*a + P2x2_*a + P1y2_*b + P2y2_*b + P1z2_*c + P2z2_*c - 2.0*P1x*P2x*a - 2.0*P1y*P2y*b - 2.0*P1z*P2z*c);
 
  
-    float t1 = (b_ + sqrt(D_)+0.000001)/(a_+0.000001);
-    float t2 = (b_ - sqrt(D_)+0.000001)/(a_+0.000001);
+    float t1 = (b_ + sqrt(D_)+0.0000001)/(a_+0.00000001);
+    float t2 = (b_ - sqrt(D_)+0.0000001)/(a_+0.00000001);
 
     float t;
 

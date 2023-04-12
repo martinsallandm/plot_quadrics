@@ -25,7 +25,7 @@ c_interceptQuad.argtypes = [c_float_p_p, c_float, c_float, c_float, c_float, c_f
 
 
 c_compute3DValues = c_lib.compute3DValues
-c_compute3DValues.argtypes = [c_float_p_p, c_int_p_p, c_float, c_int]
+c_compute3DValues.argtypes = [c_float_p_p, c_int_p_p, c_float, c_int, c_float_p_p]
 
 
 ###
@@ -1013,7 +1013,7 @@ def addFacesBasedOnCase(vertexIndex, X,Y,Z, i,j,k, v1,v2,v3,v4,v5,v6,v7,v8, ox, 
         addFaceBasedOnMiddlePoints(X,Y,Z, i,j,k,  *(4, 8, 4, 3, 8, 6),   vertexIndex, ox, oy, oz, dt, E)
         return
         
-def marchingCubes(lim, N, E_):
+def marchingCubes(lim, N, E_, bbox):
     """
     returns a set of vertex X,Y,Z and faces i,j,k for the plot of implicit equation eqn
 
@@ -1078,7 +1078,7 @@ def marchingCubes(lim, N, E_):
     #             quadValuesInTheWholeCube[i_,j_,k_] = int(np.sign(evalQuad(E,x,y,z)))
 
     # 200+ times speedup!
-    c_compute3DValues(E.astype('float32'), quadValuesInTheWholeCube, lim, N)
+    c_compute3DValues(E.astype('float32'), quadValuesInTheWholeCube, lim, N, bbox.astype('float32'))
 
     toc = time.time()
     print(f'Time to evaluate the cube {toc-tic}s')
@@ -1108,6 +1108,8 @@ def marchingCubes(lim, N, E_):
                     if not (vt==8 or vt==-8):
                         addFacesBasedOnCase(vertexIndex, X,Y,Z, i,j,k,  v1,v2,v3,v4,v5,v6,v7,v8,  x, y, z,  dt,  E)
                         cubes.append((x,y,z,tuple()))
+
+
 
     toc = time.time()
     print(f'Time to face up the quad {toc-tic}s')
@@ -1245,12 +1247,12 @@ def plotTraces(traces, lim):
 
 
 
-def plot_quadrics(Es, lim, N, colors, withCubes = False):
+def plot_quadrics(Es, lim, N, colors, bbox, withCubes = False):
 
     traces = []
 
     for E,color in zip(Es, colors):
-        X,Y,Z,i,j,k, cubes, dt = marchingCubes(lim, N, E)
+        X,Y,Z,i,j,k, cubes, dt = marchingCubes(lim, N, E, bbox)
         traces += setPatches(X,Y,Z,i,j,k, lim, cubes if withCubes else [], dt, color)
 
     plotTraces(traces, lim)

@@ -55,7 +55,7 @@ for i in range(N):
 
 
 lim = 4.0
-N = 30
+N = 4
 
 A = np.zeros((N,N,N)).astype(np.int8)
 
