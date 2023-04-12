@@ -1252,11 +1252,11 @@ def plotTraces(traces, lim):
 
 
 
-def plot_quadrics(Es, lim, N, colors, bbox, withCubes = False):
+def plot_quadrics(Es, colors, bboxs, lim, N, withCubes = False):
 
     traces = []
 
-    for E,color in zip(Es, colors):
+    for E,color,bbox in zip(Es, colors, bboxs):
         X,Y,Z,i,j,k, cubes, dt = marchingCubes(lim, N, E, bbox)
         traces += setPatches(X,Y,Z,i,j,k, lim, cubes if withCubes else [], dt, color)
 
